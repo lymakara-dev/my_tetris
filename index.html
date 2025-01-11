@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tetris Game</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body>
+    <canvas width="320" height="640" id="canvas"></canvas>
+    <div>
+      <div>
+        <audio src="Spook.mp3" loop="true" autoplay="true">
+          Game Sound
+          <!-- <embed src="Spook.mp3" loop="true" autostart="true"></embed> -->
+        </audio>
+      </div>
+      <sidebar>
+        <div class="player">
+          <h3>CONTROLS:</h3>
+          <div>
+            <p><i class="dir up"></i> - UP</p>
+          </div>
+          <div>
+            <p><i class="dir down"></i> - DOWN</p>
+          </div>
+          <div>
+            <p><i class="dir left"></i> - LEFT</p>
+          </div>
+          <div>
+            <p><i class="dir right"></i> - RIGHT</p>
+          </div>
+        </div>
+
+        <div class="player">
+          Score:
+          <div id="score"></div>
+          <p></p>
+          Lines:
+          <div id="lines-dropped"></div>
+          <p></p>
+        </div>
+        <div>
+          <div>
+            <button type="button" class="stopbtn" onclick="endGame()">
+              End
+            </button>
+          </div>
+          <p></p>
+          <div>
+            <button
+              type="button"
+              class="playbtn"
+              onclick="window.location.reload()"
+            >
+              Re-Start
+            </button>
+          </div>
+
+          <div>
+            <button class="pausePlayt" onclick="pausePlay()">
+              Pause/Resume Game
+            </button>
+          </div>
+        </div>
+      </sidebar>
+    </div>
+    <script src="my_tetris.js"></script>
+  </body>
+</html>
