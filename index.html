@@ -1,81 +1,77 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Tetris Game</title>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-  </head>
 
-  <body>
-    <div>
-      <audio src="Spook.mp3" loop="true" autoplay="true">
-        Game Sound
-        <!-- <embed src="Spook.mp3" loop="true" autostart="true"></embed> -->
-      </audio>
-      <div class="dashboard">
-        <div>
-          <canvas width="320" height="640" id="gameCanvas"></canvas>
-        </div>
+<head>
+  <title>Tetris Game</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
 
-        <div class="player">
-          <div class="control">
-            <h3>CONTROLS:</h3>
-            <div>
-              <button class="button-30">
-                <i class="dir up"></i>
-              </button>
-              <span>UP</span>
-            </div>
-            <div>
-              <button class="button-30">
-                <i class="dir down"></i>
-              </button>
-              <span>DOWN</span>
-            </div>
-            <div>
-              <button class="button-30">
-                <i class="dir left"></i>
-              </button>
-              <span>LEFT</span>
-            </div>
-            <div>
-              <button class="button-30">P</button>
-              <span>PAUSE</span>
-            </div>
-            <div>
-              <button class="button-30">Space</button>
-              <span>HARD DROP</span>
-            </div>
-            <div>
-              <button class="button-30">ESC</button>
-              <span>END GAME</span>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h1>TETRIS</h1>
-          <canvas id="nextPieceCanvas" width="150" height="150"></canvas>
-          <p>Score: <span id="score">0</span></p>
-          <p>Line: <span id="lines-dropped">0</span></p>
-          <p>Level: <span id="level">1</span></p>
-          <div class="group-btn">
-            <button
-              type="button"
-              class="button-30"
-              onclick="window.location.reload()"
-            >
-              Re-Start
-            </button>
-            <button type="button" class="button-30" onclick="endGame()">
-              End
-            </button>
-            <button class="button-30" onclick="pausePlay()">
-              Pause/Resume Game
-            </button>
-         
+<body>
+  <div>
+    <audio src="Spook.mp3" loop="true" autoplay="true">
+      Game Sound
+      <!-- <embed src="Spook.mp3" loop="true" autostart="true"></embed> -->
+    </audio>
+    <div class="dashboard">
+      <div>
+        <canvas width="320" height="640" id="gameCanvas"></canvas>
+      </div>
+      
+      <div>
+        <h1>TETRIS</h1>
+        <canvas id="nextPieceCanvas" width="150" height="150"></canvas>
+        <p>Score: <span id="score">0</span></p>
+        <p>Line: <span id="lines-dropped">0</span></p>
+        <p>Level: <span id="level">1</span></p>
+        <div class="group-btn">
+          <button type="button" class="button-30" onclick="window.location.reload()">
+            Re-Start
+          </button>
+          <button type="button" class="button-30" onclick="endGame()">
+            End
+          </button>
+          <button class="button-30" onclick="pausePlay()">
+            Pause/Resume Game
+          </button>
         </div>
       </div>
+
+      <div class="control">
+        <h3>CONTROLS:</h3>
+        <div>
+          <button class="button-30">
+            <i class="dir up"></i>
+          </button>
+          <span>UP</span>
+        </div>
+        <div>
+          <button class="button-30">
+            <i class="dir down"></i>
+          </button>
+          <span>DOWN</span>
+        </div>
+        <div>
+          <button class="button-30">
+            <i class="dir left"></i>
+          </button>
+          <span>LEFT</span>
+        </div>
+        <div>
+          <button class="button-30">P</button>
+          <span>PAUSE</span>
+        </div>
+        <div>
+          <button class="button-30">Space</button>
+          <span>HARD DROP</span>
+        </div>
+        <div>
+          <button class="button-30">ESC</button>
+          <span>END GAME</span>
+        </div>
+      </div>
+
+
     </div>
     <footer>
       <div>
@@ -86,5 +82,6 @@
     </footer>
 
     <script src="my_tetris.js"></script>
-  </body>
+</body>
+
 </html>

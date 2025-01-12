@@ -1,3 +1,134 @@
+let score = 0;
+let droppedLines = 0;
+let level = 1;
+let linesToNextLevel = 10; // Fixed goal for level progression
+let lockDelay = 500; // Half-second lock delay
+let lastDropTime = 0;
+
+// Update the score based on the number of lines cleared
+function updateScore(droppedRows) {
+  switch (droppedRows) {
+    case 1:
+      score += 1;
+      break;
+    case 2:
+      score += 3;
+      break;
+    case 3:
+      score += 5;
+      break;
+    case 4:
+      score += 8;
+      break;
+    default:
+      score = 0;
+  }
+
+  // Update score display
+  const displayScore = document.getElementById("score");
+  displayScore.innerHTML = score;
+
+  // Update lines dropped display
+  droppedLines += droppedRows;
+  document.getElementById("lines-dropped").innerHTML = droppedLines;
+
+  // Check for level progression
+  if (droppedLines >= linesToNextLevel) {
+    level++;
+    linesToNextLevel += 5 * level; // Variable goal for level progression
+    document.getElementById("level").innerHTML = level;
+  }
+}
+
+// Place the tetromino on the playField
+function placeTetromino() {
+  for (let row = 0; row < tetromino.matrix.length; row++) {
+    for (let col = 0; col < tetromino.matrix[row].length; col++) {
+      if (tetromino.matrix[row][col]) {
+        // Game over if piece has any part offscreen
+        if (tetromino.row + row < 0) {
+          return displayGameOver();
+        }
+
+        playField[tetromino.row + row][tetromino.col + col] = tetromino.piece;
+      }
+    }
+  }
+
+  // Check line clears starting from the bottom and working our way up
+  let droppedRows = 0;
+  for (let row = playField.length - 1; row >= 0; ) {
+    if (playField[row].every((cell) => !!cell)) {
+      droppedRows++;
+
+      // Drop rows above this line
+      for (let r = row; r >= 0; r--) {
+        for (let c = 0; c < playField[r].length; c++) {
+          playField[r][c] = playField[r - 1][c];
+        }
+      }
+    } else {
+      row--;
+    }
+  }
+
+  tetromino = obtNextTetromino();
+  if (droppedRows > 0) {
+    updateScore(droppedRows);
+  }
+}
+
+// Game draw function
+function draw() {
+  if (paused || gameOver) return; // Skip drawing if the game is paused or over
+  reqAF = requestAnimationFrame(draw);
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the playField
+  for (let row = 0; row < 20; row++) {
+    for (let col = 0; col < 10; col++) {
+      if (playField[row][col]) {
+        const piece = playField[row][col];
+        context.fillStyle = tetColors[piece];
+
+        // Looping 1 px smaller than the grid creates a grid effect
+        context.fillRect(col * grid, row * grid, grid - 1, grid - 1);
+      }
+    }
+  }
+
+  // Draw the active tetromino
+  if (tetromino) {
+    const now = Date.now();
+    if (now - lastDropTime > lockDelay) {
+      tetromino.row++;
+      lastDropTime = now;
+
+      // Place piece if it runs into anything
+      if (!isCorrectMove(tetromino.matrix, tetromino.row, tetromino.col)) {
+        tetromino.row--;
+        placeTetromino();
+      }
+    }
+
+    context.fillStyle = tetColors[tetromino.piece];
+
+    for (let row = 0; row < tetromino.matrix.length; row++) {
+      for (let col = 0; col < tetromino.matrix[row].length; col++) {
+        if (tetromino.matrix[row][col]) {
+          // Looping 1 px smaller than the grid creates a grid effect
+          context.fillRect(
+            (tetromino.col + col) * grid,
+            (tetromino.row + row) * grid,
+            grid - 1,
+            grid - 1
+          );
+        }
+      }
+    }
+  }
+}
+
 // get a random integer between the range of [min,max]
 function getRandomNumber(min, max) {
   min = Math.ceil(min);
@@ -72,52 +203,6 @@ function isCorrectMove(matrix, mtxRow, mtxCol) {
   return true;
 }
 
-// place the tetromino on the playField
-function placeTetromino() {
-  for (let row = 0; row < tetromino.matrix.length; row++) {
-    for (let col = 0; col < tetromino.matrix[row].length; col++) {
-      if (tetromino.matrix[row][col]) {
-        // game over if piece has any part offscreen
-        if (tetromino.row + row < 0) {
-          return displayGameOver();
-        }
-
-        playField[tetromino.row + row][tetromino.col + col] = tetromino.piece;
-      }
-    }
-  }
-
-  // check line clears starting from the bottom and working our way up
-  let droppedRows = 0;
-  let lines = 0;
-  for (let row = playField.length - 1; row >= 0; ) {
-    if (playField[row].every((cell) => !!cell)) {
-      droppedRows++;
-      lines++;
-
-      // drop rows above this line
-      for (let r = row; r >= 0; r--) {
-        for (let c = 0; c < playField[r].length; c++) {
-          playField[r][c] = playField[r - 1][c];
-        }
-      }
-    } else {
-      row--;
-    }
-  }
-
-  tetromino = obtNextTetromino();
-  if (droppedRows > 0 && lines > 0) {
-    updateScore(droppedRows);
-    updateDroppedLines(lines);
-  }
-}
-
-function updateDroppedLines(lines) {
-  droppedLines += lines;
-  document.getElementById("lines-dropped").innerHTML = droppedLines;
-}
-
 //Creating line/row cleared function
 function rowDropped() {
   for (let row = playField.length - 1; row >= 0; ) {
@@ -134,35 +219,9 @@ function rowDropped() {
   }
 }
 
-let score = 0;
-let droppedLines = 0;
-function updateScore(droppedRows) {
-  switch (droppedRows) {
-    case 1:
-      score += 1;
-      break;
-    case 2:
-      score += 3;
-      break;
-    case 3:
-      score += 5;
-      break;
-    case 4:
-      score += 8;
-      break;
-    default:
-      score = 0;
-  }
-
-  // update score display
-  const displayScore = document.getElementById("score");
-  displayScore.innerHTML = score;
-
-  let lines = Math.floor(score / 100);
-  if (lines > droppedLines) {
-    droppedLines = lines;
-    updateDroppedLines();
-  }
+function updateDroppedLines(lines) {
+  droppedLines += lines;
+  document.getElementById("lines-dropped").innerHTML = droppedLines;
 }
 
 let paused = false;
@@ -320,57 +379,6 @@ let count = 0;
 let tetromino = obtNextTetromino();
 let reqAF = null; // keep track of the animation frame so we can cancel it
 let gameOver = false;
-
-// game draw
-function draw() {
-  if (paused || gameOver) return; // Skip drawing if the game is puased or over
-  reqAF = requestAnimationFrame(draw);
-  context.clearRect(0, 0, canvas.width, canvas.height);
-
-  // draw the playField
-  for (let row = 0; row < 20; row++) {
-    for (let col = 0; col < 10; col++) {
-      if (playField[row][col]) {
-        const piece = playField[row][col];
-        context.fillStyle = tetColors[piece];
-
-        // looping 1 px smaller than the grid creates a grid effect
-        context.fillRect(col * grid, row * grid, grid - 1, grid - 1);
-      }
-    }
-  }
-
-  // draw the active tetromino
-  if (tetromino) {
-    // tetromino falls every 35 frames
-    if (++count > 35) {
-      tetromino.row++;
-      count = 0;
-
-      // place piece if it runs into anything
-      if (!isCorrectMove(tetromino.matrix, tetromino.row, tetromino.col)) {
-        tetromino.row--;
-        placeTetromino();
-      }
-    }
-
-    context.fillStyle = tetColors[tetromino.piece];
-
-    for (let row = 0; row < tetromino.matrix.length; row++) {
-      for (let col = 0; col < tetromino.matrix[row].length; col++) {
-        if (tetromino.matrix[row][col]) {
-          // looping 1 px smaller than the grid creates a grid effect
-          context.fillRect(
-            (tetromino.col + col) * grid,
-            (tetromino.row + row) * grid,
-            grid - 1,
-            grid - 1
-          );
-        }
-      }
-    }
-  }
-}
 
 // listen to keyboard events to move the active tetromino
 document.addEventListener("keydown", function (e) {
