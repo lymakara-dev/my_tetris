@@ -7,64 +7,84 @@
   </head>
 
   <body>
-    <canvas width="320" height="640" id="canvas"></canvas>
     <div>
-      <div>
-        <audio src="Spook.mp3" loop="true" autoplay="true">
-          Game Sound
-          <!-- <embed src="Spook.mp3" loop="true" autostart="true"></embed> -->
-        </audio>
-      </div>
-      <sidebar>
-        <div class="player">
-          <h3>CONTROLS:</h3>
-          <div>
-            <p><i class="dir up"></i> - UP</p>
-          </div>
-          <div>
-            <p><i class="dir down"></i> - DOWN</p>
-          </div>
-          <div>
-            <p><i class="dir left"></i> - LEFT</p>
-          </div>
-          <div>
-            <p><i class="dir right"></i> - RIGHT</p>
-          </div>
+      <audio src="Spook.mp3" loop="true" autoplay="true">
+        Game Sound
+        <!-- <embed src="Spook.mp3" loop="true" autostart="true"></embed> -->
+      </audio>
+      <div class="dashboard">
+        <div>
+          <canvas width="320" height="640" id="gameCanvas"></canvas>
         </div>
 
         <div class="player">
-          Score:
-          <div id="score"></div>
-          <p></p>
-          Lines:
-          <div id="lines-dropped"></div>
-          <p></p>
-        </div>
-        <div>
-          <div>
-            <button type="button" class="stopbtn" onclick="endGame()">
-              End
-            </button>
+          <div class="control">
+            <h3>CONTROLS:</h3>
+            <div>
+              <button class="button-30">
+                <i class="dir up"></i>
+              </button>
+              <span>UP</span>
+            </div>
+            <div>
+              <button class="button-30">
+                <i class="dir down"></i>
+              </button>
+              <span>DOWN</span>
+            </div>
+            <div>
+              <button class="button-30">
+                <i class="dir left"></i>
+              </button>
+              <span>LEFT</span>
+            </div>
+            <div>
+              <button class="button-30">P</button>
+              <span>PAUSE</span>
+            </div>
+            <div>
+              <button class="button-30">Space</button>
+              <span>HARD DROP</span>
+            </div>
+            <div>
+              <button class="button-30">ESC</button>
+              <span>END GAME</span>
+            </div>
           </div>
-          <p></p>
-          <div>
+        </div>
+
+        <div>
+          <h1>TETRIS</h1>
+          <canvas id="nextPieceCanvas" width="150" height="150"></canvas>
+          <p>Score: <span id="score">0</span></p>
+          <p>Line: <span id="lines-dropped">0</span></p>
+          <p>Level: <span id="level">1</span></p>
+          <div class="group-btn">
             <button
               type="button"
-              class="playbtn"
+              class="button-30"
               onclick="window.location.reload()"
             >
               Re-Start
             </button>
-          </div>
-
-          <div>
-            <button class="pausePlayt" onclick="pausePlay()">
+            <button type="button" class="button-30" onclick="endGame()">
+              End
+            </button>
+            <button class="button-30" onclick="pausePlay()">
               Pause/Resume Game
             </button>
-          </div>
+         
         </div>
-      </sidebar>
+      </div>
     </div>
+    <footer>
+      <div>
+        Tetris © 1985~XXXX Tetris Holding. Tetris logos, Tetris theme song, and
+        Tetriminos are trademarks of Tetris Holding. Licensed to The Tetris
+        Company. Game design by Alexey Pajitnov. Logo design by Roger Dean.
+      </div>
+    </footer>
+
     <script src="my_tetris.js"></script>
   </body>
 </html>

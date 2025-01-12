@@ -32,6 +32,9 @@ function obtNextTetromino() {
   // I starts on row 21 (-1), all others start on row 22 (-2)
   const row = piece === "I" ? -1 : -2;
 
+  // Draw the next piece
+  drawNextPiece();
+
   return {
     piece: piece,
     matrix: matrix,
@@ -110,7 +113,8 @@ function placeTetromino() {
   }
 }
 
-function updateDroppedLines() {
+function updateDroppedLines(lines) {
+  droppedLines += lines;
   document.getElementById("lines-dropped").innerHTML = droppedLines;
 }
 
@@ -130,36 +134,21 @@ function rowDropped() {
   }
 }
 
-function rowDrop() {
-  for (let row = playField.length - 1; row >= 0; ) {
-    if (playField[row].every((cell) => !!cell)) {
-      // drop every row above this one
-      for (let r = row; r >= 0; r--) {
-        for (let c = 0; c < playField[r].length; c++) {
-          playField[r][c] = playField[r - 1][c];
-        }
-      }
-    } else {
-      row--;
-    }
-  }
-}
-
 let score = 0;
 let droppedLines = 0;
 function updateScore(droppedRows) {
   switch (droppedRows) {
     case 1:
-      score += 100;
+      score += 1;
       break;
     case 2:
-      score += 300;
+      score += 3;
       break;
     case 3:
-      score += 500;
+      score += 5;
       break;
     case 4:
-      score += 800;
+      score += 8;
       break;
     default:
       score = 0;
@@ -184,7 +173,7 @@ function countdown(callback) {
   let countdownValue = 3;
   context.fillStyle = "black";
   context.globalAlpha = 0.75;
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
   context.globalAlpha = 1;
   context.fillStyle = "white";
   context.font = "36px monospace";
@@ -192,7 +181,12 @@ function countdown(callback) {
   context.textBaseline = "middle";
 
   countdownInterval = setInterval(() => {
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, canvas.height / 2 - 30, canvas.width, 60);
+    context.fillStyle = "black";
+    context.globalAlpha = 0.75;
+    context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
+    context.globalAlpha = 1;
+    context.fillStyle = "white";
     context.fillText(countdownValue, canvas.width / 2, canvas.height / 2);
     countdownValue--;
 
@@ -207,7 +201,6 @@ function countdown(callback) {
 function pausePlay() {
   if (!paused) {
     // pause the game
-    removeInterval(dropInterval);
     paused = true;
   } else {
     // resume the game with a countdown
@@ -235,10 +228,31 @@ function displayGameOver() {
   context.fillText("GAME OVER!", canvas.width / 2, canvas.height / 2);
 }
 
-const canvas = document.getElementById("canvas");
+const canvas = document.getElementById("gameCanvas");
 const context = canvas.getContext("2d");
 const grid = 32;
 const tetrominoMenu = [];
+
+// Create a new canvas element in your HTML
+const nextCanvas = document.getElementById("nextPieceCanvas");
+const nextContext = nextCanvas.getContext("2d");
+
+// Function to draw the next piece on the new canvas
+function drawNextPiece() {
+  nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  const nextPiece = tetrominoMenu[tetrominoMenu.length - 1];
+  const matrix = tetrominos[nextPiece];
+  const color = tetColors[nextPiece];
+
+  nextContext.fillStyle = color;
+  for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < matrix[row].length; col++) {
+      if (matrix[row][col]) {
+        nextContext.fillRect(col * grid, row * grid, grid - 1, grid - 1);
+      }
+    }
+  }
+}
 
 // Tetris playField is 10x20, with a few rows offscreen
 const playField = [];
@@ -329,7 +343,7 @@ function draw() {
   // draw the active tetromino
   if (tetromino) {
     // tetromino falls every 35 frames
-    if (++count > 100) {
+    if (++count > 35) {
       tetromino.row++;
       count = 0;
 
@@ -426,9 +440,18 @@ document.addEventListener("keydown", function (e) {
 });
 
 window.addEventListener("DOMContentLoaded", function (e) {
+  const canvas = document.getElementById("gameCanvas");
+  context = canvas.getContext("2d");
+
   const audio = document.querySelector("audio");
   audio.volume = 0.2;
   audio.play();
+
+  // Start the game with a countdown
+  countdown(() => {
+    reqAF = requestAnimationFrame(draw);
+    muscStop();
+  });
 });
 
 function muscStop() {
